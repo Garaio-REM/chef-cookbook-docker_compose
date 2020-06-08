@@ -27,6 +27,17 @@ def get_down_params
   (services.nil? ? '' : ' ' + services.join(' '))
 end
 
+action :pull do
+  project_name = new_resource.project_name || current_resource.project_name
+
+  execute "running docker-compose pull for project #{project_name}" do
+    command "docker-compose #{get_compose_params} pull"
+    environment('PATH' => '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin')
+    user 'root'
+    group 'root'
+  end
+end
+
 action :up do
   project_name = new_resource.project_name || current_resource.project_name
   compose_files = new_resource.compose_files || current_resource.compose_files
