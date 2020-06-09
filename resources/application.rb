@@ -8,6 +8,7 @@ property :project_name, kind_of: String, name_property: true
 property :compose_files, kind_of: Array, required: true
 property :remove_orphans, kind_of: [TrueClass, FalseClass], default: false
 property :services, kind_of: Array, default: []
+property :workdir, kind_of: String
 
 default_action :up
 
@@ -35,6 +36,7 @@ action :pull do
     environment('PATH' => '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin')
     user 'root'
     group 'root'
+    cwd new_resource.workdir
   end
 end
 
@@ -48,6 +50,7 @@ action :up do
     only_if "[ $(docker-compose -f #{compose_files.join(' -f ')} ps -q | wc -l) -eq 0 ]"
     user 'root'
     group 'root'
+    cwd new_resource.workdir
   end
 end
 
@@ -59,6 +62,7 @@ action :create do
     environment('PATH' => '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin')
     user 'root'
     group 'root'
+    cwd new_resource.workdir
   end
 end
 
@@ -72,5 +76,6 @@ action :down do
     not_if "[ $(docker-compose -f #{compose_files.join(' -f ')} ps -q | wc -l) -eq 0 ]"
     user 'root'
     group 'root'
+    cwd new_resource.workdir
   end
 end
